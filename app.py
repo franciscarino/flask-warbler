@@ -20,14 +20,11 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_DATABASE_URI'] = (
     os.environ['DATABASE_URL'].replace("postgres://", "postgresql://"))
 app.config['SQLALCHEMY_ECHO'] = False
-app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = True
+app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 app.config['SECRET_KEY'] = os.environ['SECRET_KEY']
 toolbar = DebugToolbarExtension(app)
 
 connect_db(app)
-
-
-
 
 ##############################################################################
 # User signup/login/logout
@@ -239,11 +236,7 @@ def profile():
 
     # IMPLEMENT THIS
 
-    user = User.authenticate(
-            g.user.username,
-            g.user.password)
-
-    breakpoint()
+    user = User.query.get(g.user.id)
 
     form = UpdateUserForm(obj=g.user)
 
@@ -252,26 +245,16 @@ def profile():
         return redirect("/")
 
     if form.validate_on_submit():
-        """ TODO: username can be updated"""
 
-
-        g.user.username = form.username.data
-        g.user.email = form.email.data
-        g.user.image_url = form.image_url.data
-        g.user.header_image_url = form.header_image_url.data
-        g.user.bio = form.bio.data
-
-        # data = request.form
-
-        # user.username = data.get('username', user.username)
-        # user.email = data.get('email', user.email)
-        # user.image_url = data.get('image_url', user.image_url)
-        # user.header_image_url = data.get('header_image_url', user.header_image_url)
-        # user.bio = data.get('bio', user.bio)
+        user.username = form.username.data
+        user.email = form.email.data
+        user.image_url = form.image_url.data
+        user.header_image_url = form.header_image_url.data
+        user.bio = form.bio.data
 
         db.session.commit()
 
-        return redirect(f"/users/{g.user.id}") ###
+        return redirect(f"/users/{g.user.id}")
 
     else:
         return render_template("/users/edit.html", form=form, user=user)
