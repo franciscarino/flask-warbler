@@ -123,12 +123,14 @@ def logout():
 
     form = g.csrf_form
 
-    # IMPLEMENT THIS AND FIX BUG
-    # DO NOT CHANGE METHOD ON ROUTE
-
     if form.validate_on_submit():
 
+        do_logout()
+
         return redirect("/login")
+
+
+#TODO: add do logout, authentication authorization
 
 
 
@@ -231,18 +233,16 @@ def stop_following(follow_id):
 
 
 @app.route('/users/profile', methods=["GET", "POST"])
-def profile():
+def edit_profile():
     """Update profile for current user."""
-
-    # IMPLEMENT THIS
-
-    user = User.query.get(g.user.id)
-
-    form = UpdateUserForm(obj=g.user)
 
     if not g.user:
         flash("Access unauthorized.", "danger")
         return redirect("/")
+
+    user = g.user
+
+    form = UpdateUserForm(obj=user)
 
     if form.validate_on_submit():
 
@@ -348,6 +348,7 @@ def homepage():
     - logged in: 100 most recent messages of followed_users
     """
 
+    #TODO: query for following
     if g.user:
         messages = (Message
                     .query

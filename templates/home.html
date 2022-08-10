@@ -58,6 +58,10 @@
             >{{ msg.timestamp.strftime('%d %B %Y') }}</span
           >
           <p>{{ msg.text }}</p>
+          <div class="likes">
+            <i class="bi bi-star"></i>
+            <i class="bi bi-star-fill"></i>
+          </div>
         </div>
       </li>
       {% endif %} {% endfor %}
