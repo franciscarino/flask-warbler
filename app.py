@@ -22,7 +22,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = (
 app.config['SQLALCHEMY_ECHO'] = False
 app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 app.config['SECRET_KEY'] = os.environ['SECRET_KEY']
-toolbar = DebugToolbarExtension(app)
+# toolbar = DebugToolbarExtension(app)
 
 connect_db(app)
 
@@ -344,18 +344,9 @@ def delete_message(message_id):
 ##############################################################################
 # Likes routes:
 
-# POST request to like a message
-# toggle star class for message
-# create a new instance of like class
-
-
-# Add likes count to  profile page
-# create page that shows liked messgaes (similar to user messages page)
-
-
-#TODO:
 @app.post("/messages/<int:message_id>/like")
-def like_message(message_id):
+def toggle_like_message(message_id):
+    """Handles liking/unliking a message """
 
     form = g.csrf_form
 
@@ -377,24 +368,15 @@ def like_message(message_id):
             g.user.likes.append(message)
             db.session.commit()
 
-    return redirect(request.referrer)
+    return redirect(request.referrer) if request.referrer else redirect(f"/messages/{message_id}")
 
+@app.get("/users/<int:user_id>/likes")
+def show_likes_page(user_id):
+    """Shows all user liked messages """
 
-    # toggle star class for message
-        #query db for liked messages
-        #if liked, then unlike
-            #delete instance of liked message
-            # commit
-            # add empty star class
+    user = User.query.get_or_404(user_id)
 
-
-        #if not liked, then like
-            #create instance of liked message
-            # add filled star class
-            # add and commit
-
-    #return redirect(request.referrer)
-
+    return render_template('/users/likes.html', user=user)
 
 
 
