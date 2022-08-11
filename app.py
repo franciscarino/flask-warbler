@@ -123,16 +123,10 @@ def logout():
 
     form = g.csrf_form
 
-    if form.validate_on_submit():
-
+    if g.user and form.validate_on_submit():
         do_logout()
-
-        return redirect("/login")
-
-
-#TODO: add do logout, authentication authorization
-
-
+        flash("You have successfully logged out.", 'success')
+    return redirect("/login")
 
 
 ##############################################################################
@@ -240,24 +234,29 @@ def edit_profile():
         flash("Access unauthorized.", "danger")
         return redirect("/")
 
-    user = g.user
-
-    form = UpdateUserForm(obj=user)
+    form = UpdateUserForm(obj=g.user)
 
     if form.validate_on_submit():
 
-        user.username = form.username.data
-        user.email = form.email.data
-        user.image_url = form.image_url.data
-        user.header_image_url = form.header_image_url.data
-        user.bio = form.bio.data
+        user = User.authenticate(
+            g.user.username,
+            form.password.data)
 
-        db.session.commit()
+        if user:
 
-        return redirect(f"/users/{g.user.id}")
+            user.username = form.username.data
+            user.email = form.email.data
+            user.image_url = form.image_url.data
+            user.header_image_url = form.header_image_url.data
+            user.bio = form.bio.data
 
-    else:
-        return render_template("/users/edit.html", form=form, user=user)
+            db.session.commit()
+
+            return redirect(f"/users/{user.id}")
+
+        flash("Incorrect user/password.", "danger")
+
+    return render_template("/users/edit.html", form=form, user=g.user)
 
 
 @app.post('/users/delete')
@@ -271,10 +270,13 @@ def delete_user():
         flash("Access unauthorized.", "danger")
         return redirect("/")
 
-    do_logout()
+    form = g.csrf_form
 
-    db.session.delete(g.user)
-    db.session.commit()
+    if form.validate_on_submit():
+        do_logout()
+
+        db.session.delete(g.user)
+        db.session.commit()
 
     return redirect("/signup")
 
@@ -348,10 +350,13 @@ def homepage():
     - logged in: 100 most recent messages of followed_users
     """
 
-    #TODO: query for following
     if g.user:
+
+        user_following_ids = [u.id for u in g.user.following]
+        user_following_ids.append(g.user.id)
+
         messages = (Message
-                    .query
+                    .query.filter(Message.user_id.in_(user_following_ids))
                     .order_by(Message.timestamp.desc())
                     .limit(100)
                     .all())
