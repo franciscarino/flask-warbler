@@ -1,28 +1,26 @@
-{% extends 'base.html' %}
+{% extends 'base.html' %} {% block content %}
 
-{% block content %}
+<img
+  src="{{ user.header_image_url }}"
+  alt="Header umage for {{ user.username }}"
+  id="warbler-hero"
+  class="full-width"
+/>
 
-
-<img src="{{ user.header_image_url }}"
-     alt="Header umage for {{ user.username }}"
-     id="warbler-hero" class="full-width">
-
-<img src="{{ user.image_url }}"
-     alt="Image for {{ user.username }}"
-     id="profile-avatar">
+<img
+  src="{{ user.image_url }}"
+  alt="Image for {{ user.username }}"
+  id="profile-avatar"
+/>
 <div class="row full-width">
-  <div class="container" style="max-width: 1300px;">
+  <div class="container" style="max-width: 1300px">
     <div class="row justify-content-end">
       <div class="col-9">
-
         <ul class="user-stats nav nav-pills">
-
           <li class="stat">
             <p class="small">Messages</p>
             <h4>
-              <a href="/users/{{ user.id }}">
-                {{ user.messages | length }}
-              </a>
+              <a href="/users/{{ user.id }}"> {{ user.messages | length }} </a>
             </h4>
           </li>
 
@@ -45,7 +43,11 @@
           </li>
           <li class="stat">
             <p class="small">Likes</p>
-            <h4>TBD</h4>
+            <h4>
+              <a href="/users/{{ user.id }}/likes">
+                {{ user.likes | length }}
+              </a>
+            </h4>
           </li>
 
           <li class="ms-auto">
@@ -58,22 +60,17 @@
                 Delete Profile
               </button>
             </form>
-            {% elif g.user %}
-            {% if g.user.is_following(user) %}
-            <form method="POST"
-                  action="/users/stop-following/{{ user.id }}">
+            {% elif g.user %} {% if g.user.is_following(user) %}
+            <form method="POST" action="/users/stop-following/{{ user.id }}">
               <button class="btn btn-primary">Unfollow</button>
             </form>
             {% else %}
             <form method="POST" action="/users/follow/{{ user.id }}">
               <button class="btn btn-outline-primary">Follow</button>
             </form>
-            {% endif %}
-            {% endif %}
+            {% endif %} {% endif %}
           </li>
-
         </ul>
-
       </div>
     </div>
   </div>
@@ -89,8 +86,7 @@
     </p>
   </div>
 
-  {% block user_details %}
-  {% endblock %}
+  {% block user_details %} {% endblock %}
 </div>
 
 {% endblock %}

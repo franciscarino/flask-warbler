@@ -258,6 +258,10 @@ def edit_profile():
 
     return render_template("/users/edit.html", form=form, user=g.user)
 
+"""
+#TODO:
+@app.get("/users/{{ user.id }}/likes")
+"""
 
 @app.post('/users/delete')
 def delete_user():
@@ -336,6 +340,49 @@ def delete_message(message_id):
     db.session.commit()
 
     return redirect(f"/users/{g.user.id}")
+
+##############################################################################
+# Likes routes:
+
+# POST request to like a message
+# toggle star class for message
+# create a new instance of like class
+
+
+# Add likes count to  profile page
+# create page that shows liked messgaes (similar to user messages page)
+
+
+#TODO:
+@app.post("/messages/<int:message_id>/like")
+def like_message(message_id):
+
+    form = g.csrf_form
+
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+
+    if form.validate_on_submit():
+
+    # toggle star class for message
+        #query db for liked messages
+        #if liked, then unlike
+            #delete instance of liked message
+            # commit
+            # add empty star class
+
+
+        #if not liked, then like
+            #create instance of liked message
+            # add filled star class
+            # add and commit
+
+    #return redirect(request.referrer)
+
+    # return redirect to ??????
+
+
 
 
 ##############################################################################
