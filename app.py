@@ -363,7 +363,22 @@ def like_message(message_id):
         flash("Access unauthorized.", "danger")
         return redirect("/")
 
+    message = Message.query.get_or_404(message_id)
+
     if form.validate_on_submit():
+
+        if message in g.user.likes:
+
+            g.user.likes.remove(message)
+            db.session.commit()
+
+        else:
+
+            g.user.likes.append(message)
+            db.session.commit()
+
+    return redirect(request.referrer)
+
 
     # toggle star class for message
         #query db for liked messages
@@ -379,8 +394,6 @@ def like_message(message_id):
             # add and commit
 
     #return redirect(request.referrer)
-
-    # return redirect to ??????
 
 
 
