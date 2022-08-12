@@ -30,7 +30,7 @@ class Follows(db.Model):
     )
 
 
-class Likes(db.Model):
+class Like(db.Model):
     """Connection of a user <-> liked messages."""
 
     __tablename__ = 'likes'
