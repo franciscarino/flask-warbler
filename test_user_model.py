@@ -30,6 +30,7 @@ db.create_all()
 
 class UserModelTestCase(TestCase):
     def setUp(self):
+        """set up for every test"""
         User.query.delete()
 
         u1 = User.signup("u1", "u1@email.com", "password", None)
@@ -45,6 +46,7 @@ class UserModelTestCase(TestCase):
         db.session.rollback()
 
     def test_user_model(self):
+        """Testing user model"""
         u1 = User.query.get(self.u1_id)
 
         # User should have no messages & no followers
@@ -52,6 +54,7 @@ class UserModelTestCase(TestCase):
         self.assertEqual(len(u1.followers), 0)
 
     def test_user_repr(self):
+        """Testing user repr"""
 
         u1 = User.query.get(self.u1_id)
 
@@ -77,6 +80,55 @@ class UserModelTestCase(TestCase):
 
         self.assertNotEqual([u2], u1.following)
         self.assertNotEqual([u1], u2.followers)
+
+    def test_user_signup(self):
+        """Testing user signup"""
+
+        u3 = User.signup("u3", "u3@email.com", "password", None)
+
+        db.session.add(u3)
+        db.session.commit()
+
+        users = User.query.all()
+
+        self.assertIn(u3, users)
+
+    # def test_fail_user_signup(self):
+    #     """Testing failed user signup with failed validation"""
+
+    #     u3 = User.signup("u1", "u1@email.com", None, None)
+
+    #     db.session.add(u3)
+    #     db.session.commit()
+
+    #     # users = User.query.all()
+
+    #     self.assertRaises(ValueError, User.signup("u1", "u1@email.com", None, None))
+
+    def test_user_authentication(self):
+        """Testing authenticating user successfully"""
+
+        u1 = User.query.get(self.u1_id)
+
+        user = User.authenticate(
+            "u1",
+            "password")
+
+        self.assertEqual(u1, user)
+
+    def test_fail_user_authentication(self):
+        """Testing failed authentication"""
+
+        user = User.authenticate(
+            "u3",
+            "password")
+
+        user2 = User.authenticate(
+            "u2",
+            "wrongpassword")
+
+        self.assertEqual(False, user)
+        self.assertEqual(False, user2)
 
 
 
