@@ -51,6 +51,7 @@ class MessageBaseViewTestCase(TestCase):
         self.client = app.test_client()
 
 
+
 class MessageAddViewTestCase(MessageBaseViewTestCase):
     def test_add_message(self):
         # Since we need to change the session to mimic logging in,
@@ -66,3 +67,53 @@ class MessageAddViewTestCase(MessageBaseViewTestCase):
             self.assertEqual(resp.status_code, 302)
 
             Message.query.filter_by(text="Hello").one()
+
+
+
+class MessageShowViewTestCase(MessageBaseViewTestCase):
+    def test_homepage_messages(self):
+        """Testing new message is shown"""
+        with self.client as c:
+            with c.session_transaction() as sess:
+                sess[CURR_USER_KEY] = self.u1_id
+
+            resp = c.get("/")
+
+            self.assertEqual(resp.status_code, 200)
+            self.assertIn("m1-text", str(resp.data))
+
+
+    def test_invalid_message_show(self):
+        """Testing invalid message ID"""
+        with self.client as c:
+            with c.session_transaction() as sess:
+                sess[CURR_USER_KEY] = self.u1_id
+
+            resp = c.get("/messages/309458304")
+
+            self.assertEqual(resp.status_code, 404)
+
+
+class MessageDeleteViewTestCase(MessageBaseViewTestCase):
+    def test_delete_message(self):
+        """Testing deleting a message"""
+        with self.client as c:
+            with c.session_transaction() as sess:
+                sess[CURR_USER_KEY] = self.u1_id
+
+            resp = c.post(f"/messages/{self.m1_id}/delete", follow_redirects=True)
+
+            self.assertEqual(resp.status_code, 200)
+            self.assertNotIn("m1-text", str(resp.data))
+
+    def test_delete_message_invalid_user(self):
+        """Test deleting another user's message"""
+        with self.client as c:
+            with c.session_transaction() as sess:
+                sess[CURR_USER_KEY] = 12345
+
+            resp = c.post(f"/messages/{self.m1_id}/delete", follow_redirects=True)
+
+            self.assertEqual(resp.status_code, 200)
+            self.assertIn("Access unauthorized", str(resp.data))
+

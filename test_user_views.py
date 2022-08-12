@@ -125,3 +125,4 @@ class UserViewsTestCase(TestCase):
             self.assertNotIn("@u1", str(not_following_resp.data))
 
 
+
