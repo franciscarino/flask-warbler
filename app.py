@@ -258,10 +258,6 @@ def edit_profile():
 
     return render_template("/users/edit.html", form=form, user=g.user)
 
-"""
-#TODO:
-@app.get("/users/{{ user.id }}/likes")
-"""
 
 @app.post('/users/delete')
 def delete_user():

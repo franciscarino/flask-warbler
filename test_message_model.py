@@ -1,4 +1,4 @@
-"""User model tests."""
+"""Message model tests."""
 
 from app import app
 import os
