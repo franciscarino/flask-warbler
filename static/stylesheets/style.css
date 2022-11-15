@@ -558,6 +558,9 @@ p.card-bio {
   padding: 0;
   border: none;
   background: none;
+  color: #66757f;
+  font-size: 13px;
+  font-weight: bold;
 }
 
 .bi-star-fill {
