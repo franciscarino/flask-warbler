@@ -131,4 +131,3 @@ class UserModelTestCase(TestCase):
         self.assertEqual(False, user2)
 
 
-
