@@ -563,6 +563,10 @@ p.card-bio {
   font-weight: bold;
 }
 
+.button-link:hover {
+  color: #1c94e0;
+}
+
 .bi-star-fill {
   color: rgb(255, 213, 0);
 }
